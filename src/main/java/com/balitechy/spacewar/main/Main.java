@@ -19,7 +19,7 @@ public class Main {
                 break;
 
             case 2:
-                //gameRenderFactory = new RetroFactory();
+                gameRenderFactory = new RetroFactory();
                 break;
 
             case 3:
