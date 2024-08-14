@@ -1,18 +1,13 @@
 package com.balitechy.spacewar.main;
 
 import java.awt.Canvas;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-
-import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable {
 
-	private static final long serialVersionUID = 1L;
 	public static final int WIDTH = 320;
 	public static final int HEIGHT = WIDTH / 12 * 9;
 	public static final int SCALE = 2;
@@ -20,42 +15,33 @@ public class Game extends Canvas implements Runnable {
 	
 	private boolean running = false;
 	private Thread thread;
-	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-	
-	
-	private SpritesImageLoader sprites;
 	
 	//Game components
 	private Player player;
 	private BulletController bullets;
-	private BackgroundRenderer backgRenderer;
-	
-	
-	public void init(){
+
+	private GameRenderFactory gameRenderFactory;
+	private PlayerRenderer playerRenderer;
+	private BulletRenderer bulletRenderer;
+	private BackgroundRenderer backgroundRenderer;
+
+	public Game(GameRenderFactory renderFactory) {
+		this.gameRenderFactory = renderFactory;
+	}
+
+	public void init() {
 		requestFocus();
-		
-		
-		sprites = new SpritesImageLoader("/sprites.png");
-		try {			
-			sprites.loadImage();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+
+		this.backgroundRenderer = gameRenderFactory.crearBackgroundRenderer(this);
+		this.playerRenderer = gameRenderFactory.crearPlayerRenderer(this);
+		this.bulletRenderer = gameRenderFactory.crearBulletRenderer(this);
+
 		// Add keyboard listener
 		addKeyListener(new InputHandler(this));
 		
 		// Initialize game components.
-		
-		
-		// Set player position at the bottom center.
 		player = new Player((WIDTH * SCALE - Player.WIDTH) / 2, HEIGHT * SCALE - 50 , this);
 		bullets = new BulletController();
-		backgRenderer=new BackgroundRenderer();
-	}
-
-	public SpritesImageLoader getSprites(){
-		return sprites;
 	}
 	
 	public BulletController getBullets(){
@@ -111,7 +97,7 @@ public class Game extends Canvas implements Runnable {
 		}
 	}
 	
-	private synchronized void start(){
+	synchronized void start(){
 		if(running) return;
 		
 		running = true;
@@ -136,9 +122,10 @@ public class Game extends Canvas implements Runnable {
 	 */
 	@Override
 	public void run() {
+
 		init();
-		
-		long lastTime = System.nanoTime();
+
+        long lastTime = System.nanoTime();
 		final double numOfTicks = 60.0;
 		double ns = 1000000000 / numOfTicks;
 		double delta = 0;
@@ -179,48 +166,21 @@ public class Game extends Canvas implements Runnable {
 	/*
 	 * Render overall game components.
 	 */
-	public void render(){
+	public void render() {
 		BufferStrategy bs = this.getBufferStrategy();
-		if(bs == null){
+		if (bs == null) {
 			createBufferStrategy(3);
 			return;
 		}
-		
-		Graphics g = bs.getDrawGraphics();
-		/////////////////////////////////
-		
-		try {
-			backgRenderer.render(g, this);
-			player.render(g);
-			bullets.render(g);
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		
-		
-		
-		////////////////////////////////
+		Graphics g = bs.getDrawGraphics();
+
+		backgroundRenderer.renderBackground(g, this);
+		playerRenderer.renderPlayer(g, player.getX(), player.getY());
+		bulletRenderer.renderBullet(g, bullets.getBl());
+
 		g.dispose();
 		bs.show();
-	}
-	
-	public static void main(String args[]){		
-		Game game = new Game();
-		game.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
-		game.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
-		game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
-		
-		JFrame frame = new JFrame(game.TITLE);
-		frame.add(game);
-		frame.pack();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-		
-		game.start();
 	}
 	
 }

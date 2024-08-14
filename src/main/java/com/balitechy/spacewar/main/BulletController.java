@@ -15,13 +15,11 @@ public class BulletController {
 			}
 		}
 	}
-	
-	public void render(Graphics g){
-		for(int i=0; i < bl.size(); i++){
-			bl.get(i).render(g);
-		}
+
+	public LinkedList<Bullet> getBl(){
+		return bl;
 	}
-	
+
 	public void addBullet(Bullet bullet){
 		bl.add(bullet);
 	}

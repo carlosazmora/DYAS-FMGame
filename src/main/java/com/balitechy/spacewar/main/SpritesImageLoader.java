@@ -12,11 +12,15 @@ public class SpritesImageLoader {
 	
 	public SpritesImageLoader(String path){
 		this.path = path;
-	}
+        try {
+            loadImage();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 	
-	public BufferedImage loadImage() throws IOException{
+	public void loadImage() throws IOException{
 		image = ImageIO.read(getClass().getResource(path));
-		return image;
 	}
 	
 	public BufferedImage getImage(int top, int left, int width, int height){
