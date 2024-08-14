@@ -14,17 +14,13 @@ public class Player {
 	
 	public static final int WIDTH = 56;
 	public static final int HEIGHT = 28;
-	
-	private BufferedImage image;
+
 	private Game game;
 	
 	public Player(double x, double y, Game game){
 		this.x = x;
 		this.y = y;
 		this.game = game;
-		
-		// Get image for Player		
-		image = game.getSprites().getImage(219, 304, WIDTH, HEIGHT);
 	}
 	
 	public double getX() {
@@ -69,10 +65,5 @@ public class Player {
 			y = 0;
 		if(y >= (Game.HEIGHT * Game.SCALE) - HEIGHT)
 			y = (Game.HEIGHT * Game.SCALE) - HEIGHT;
-	}
-	
-	public void render(Graphics g){
-		g.setColor(Color.white);
-		g.drawImage(image, (int) x, (int) y, null);
 	}
 }
