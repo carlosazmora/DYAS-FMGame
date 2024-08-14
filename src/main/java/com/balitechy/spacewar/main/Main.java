@@ -10,8 +10,8 @@ public class Main {
         GameRenderFactory gameRenderFactory = null;
 
         Scanner sc = new Scanner(System.in);
-        System.out.println("Bienvenido, que estilo de juego deseas?:" +
-                "\n1) Sprites \n2) Retro \n3) Colores");
+        System.out.println("Bienvenido, ¿Qué estilo de juego deseas?:" +
+                "\n1) Sprites\n2) Retro\n3) Colorful");
         int opcion = sc.nextInt();
         switch (opcion){
             case 1:
@@ -23,11 +23,11 @@ public class Main {
                 break;
 
             case 3:
-                //gameRenderFactory = new ColorfulFactory();
+                gameRenderFactory = new ColorfulFactory();
                 break;
 
             default:
-                System.out.println("Ingresaste una opción invalida");
+                System.out.println("¡Ingresaste una opción inválida!");
                 System. exit(0);
                 break;
         }
